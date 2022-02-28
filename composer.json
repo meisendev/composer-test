@@ -1,7 +1,7 @@
 {
   "name": "meisendev/composer-test",
   "description": "description",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "license": "proprietary",
   "authors": [
     {
