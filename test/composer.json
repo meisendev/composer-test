@@ -1,0 +1,15 @@
+{
+  "name": "meisendev/composer-test",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "meisen",
+      "email": "meisendev@163.com"
+    }
+  ],
+  "require": {
+    "laravel/framework": "~6.0"
+  }
+}

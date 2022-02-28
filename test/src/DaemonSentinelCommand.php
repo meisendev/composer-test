@@ -1,10 +1,5 @@
 <?php
-/**
- * User: meisen
- * Date: 2022/2/28
- */
-
-namespace App\Daemon;
+namespace Meisendev\LaravelDaemon;
 
 class DaemonSentinelCommand extends AbstractDaemonSentinelCommand
 {

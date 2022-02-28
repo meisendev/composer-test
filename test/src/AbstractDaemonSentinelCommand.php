@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Daemon;
+namespace Meisendev\LaravelDaemon;
 
 use InvalidArgumentException;
 use LogicException;
@@ -21,8 +21,7 @@ abstract class AbstractDaemonSentinelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $file      = $input->getArgument('file');
+        $file = $input->getArgument('file');
         $processed = config($file);
 
         $this->runningProcesses = [];
@@ -34,7 +33,7 @@ abstract class AbstractDaemonSentinelCommand extends Command
 
             for ($i = 0; $i < $parallel; ++$i) {
                 $runner = new CommandRunner($i, $command);
-                $pid    = $runner->run();
+                $pid = $runner->run();
 
                 $this->runningProcesses[$pid] = $runner;
             }
@@ -47,26 +46,24 @@ abstract class AbstractDaemonSentinelCommand extends Command
 
     protected function waitForBackgroundProcesses()
     {
-
         while (true) {
             pcntl_signal_dispatch();
 
             $status = 0;
-            $pid    = pcntl_waitpid(-1, $status, WNOHANG);
+            $pid = pcntl_waitpid(-1, $status, WNOHANG);
 
             if ($pid == 0) {
                 $jumpStarted = [];
                 foreach ($this->runningProcesses as $runner) {
                     if ($runner->shouldStartNextRunWhenNotFinished()) {
-                        $earlyRunner                  = $runner->cloneEarlyRunner();
-                        $earlyRunnerPid               = $earlyRunner->run();
+                        $earlyRunner = $runner->cloneEarlyRunner();
+                        $earlyRunnerPid = $earlyRunner->run();
                         $jumpStarted[$earlyRunnerPid] = $earlyRunner;
                     }
                 }
                 $this->runningProcesses = $this->runningProcesses + $jumpStarted;
                 usleep(200 * 1000);
-            }
-            else if ($pid > 0) {
+            } else if ($pid > 0) {
                 //$exitStatus = pcntl_wexitstatus($status);
                 if (!isset($this->runningProcesses[$pid])
                     || !(($runner = $this->runningProcesses[$pid]) instanceof CommandRunner)
@@ -79,13 +76,11 @@ abstract class AbstractDaemonSentinelCommand extends Command
                 if ($newPid > 0) {
                     $this->runningProcesses[$newPid] = $runner;
                 }
-            }
-            else {
+            } else {
                 $errno = pcntl_get_last_error();
                 if ($errno == PCNTL_ECHILD) {
                     break;
-                }
-                else {
+                } else {
                     throw new RuntimeException("Error waiting for process, error = " . pcntl_strerror($errno));
                 }
             }
